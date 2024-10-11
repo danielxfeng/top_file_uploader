@@ -5,6 +5,12 @@ import { Strategy as LocalStrategy } from "passport-local";
 import GoogleStrategy from "passport-google-oidc";
 import bcrypt from "bcryptjs";
 import { prisma } from "../app.mjs";
+import {
+  authGetLogin,
+  authGetSignup,
+  authPostSignup,
+  authGetLogout,
+} from "../controllers/authController.mjs";
 
 /**
  * The passport configuration.

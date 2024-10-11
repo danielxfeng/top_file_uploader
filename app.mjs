@@ -8,6 +8,7 @@ import { fileURLToPath } from "url";
 import methodOverride from "method-override";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { PrismaClient } from "@prisma/client";
+import authRouter from "./routers/authRouter.mjs";
 
 // Set the environment variables
 dotenv.config();
