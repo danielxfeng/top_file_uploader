@@ -92,7 +92,7 @@ authRouter.get("/user/login/federated/google", passport.authenticate("google"));
 
 // Oauth2 callback
 authRouter.get(
-  "/oauth2/redirect/google",
+  "/user/oauth2/redirect/google",
   passport.authenticate("google", {
     successRedirect: "/",
     failureRedirect: "/user/login",
