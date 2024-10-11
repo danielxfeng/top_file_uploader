@@ -47,11 +47,13 @@ passport.use(
     asyncHandler(async (issuer, profile, done) => {
       let resDb = await prisma.driveFederatedCredential.findUnique({
         where: {
-          provider: "google",
-          subject: profile.id,
+          provider_subject: {
+            provider: "google",
+            subject: profile.id,
+          },
         },
         select: {
-          user: {
+          User: {
             select: {
               id: true,
               name: true,
@@ -59,18 +61,19 @@ passport.use(
           },
         },
       });
+      console.log(resDb);
 
       if (!resDb)
         resDb = await prisma.driveFederatedCredential.create({
           data: {
             provider: "google",
             subject: profile.id,
-            user: { create: { name: profile.displayName } },
+            User: { create: { name: profile.displayName } },
           },
-          select: { user: { select: { id: true, name: true } } },
+          select: { User: { select: { id: true, name: true } } },
         });
 
-      const user = resDb.user;
+      const user = resDb.User;
       return done(null, user);
     })
   )
