@@ -12,3 +12,34 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+// The User table in the database.
+model DriveUser {
+  id                  Int                        @id @default(autoincrement())
+  name                String                     @unique
+  password            String?
+  files               DriveFile[]
+  FederatedCredential DriveFederatedCredential[]
+}
+
+// The User from Google OAuth.
+model DriveFederatedCredential {
+  id       Int       @id @default(autoincrement())
+  provider String
+  subject  String
+  User     DriveUser @relation(fields: [userId], references: [id])
+  userId   Int
+
+  @@unique([provider, subject])
+}
+
+// The files table in the database.
+model DriveFile {
+  id           Int       @id @default(autoincrement())
+  name         String
+  fileLink     String?
+  sharedLink   String?
+  sharedExpiry DateTime?
+  User         DriveUser @relation(fields: [userId], references: [id])
+  userId       Int
+}
