@@ -46,9 +46,8 @@ const authPostSignup = [
   asyncHandler(async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      const msg = errors.array().map((e) => e.msg);
-      req.flash("error", msg);
-      return res.redirect("/signup");
+      errors.array().forEach((e) => req.flash("error", e.msg));
+      return res.redirect("/user/signup");
     }
     const { name, password } = req.body;
     const encryptedPassword = await bcrypt.hash(password, 10);
@@ -65,7 +64,7 @@ const authPostSignup = [
       if (error.code === "P2002") {
         // Unique Constraint Violation
         req.flash("error", "User already exists");
-        return res.redirect("/signup");
+        return res.redirect("/user/signup");
       }
       next(error);
     }

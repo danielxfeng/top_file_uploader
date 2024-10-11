@@ -20,12 +20,12 @@ passport.use(
   new LocalStrategy(
     { usernameField: "name", passwordField: "password" },
     asyncHandler(async (name, password, done) => {
-      const resDb = await prisma.user.findUnique(
-        { name },
-        { select: { id: true, name: true, password: true } }
-      );
+      const resDb = await prisma.driveUser.findUnique({
+        where: { name },
+        select: { id: true, name: true, password: true },
+      });
 
-      if (!resDb) return done(null, false, { message: "Incorrect Email" });
+      if (!resDb) return done(null, false, { message: "User not found" });
 
       const user = resDb;
       const match = await bcrypt.compare(password, user.password);
@@ -41,7 +41,7 @@ passport.use(
     {
       clientID: process.env["GOOGLE_CLIENT_ID"],
       clientSecret: process.env["GOOGLE_CLIENT_SECRET"],
-      callbackURL: "user/oauth2/redirect/google",
+      callbackURL: "/user/oauth2/redirect/google",
       scope: ["profile"],
     },
     asyncHandler(async (issuer, profile, done) => {
@@ -82,7 +82,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(
   asyncHandler(async (id, done) => {
-    const user = await readUserById(id);
+    const user = await prisma.driveUser.findUnique({ where: { id } });
     done(null, user);
   })
 );
@@ -94,7 +94,10 @@ passport.deserializeUser(
 const authRouter = express.Router();
 
 // Oauth2 redirect
-authRouter.get("/user/login/federated/google", passport.authenticate("google"));
+authRouter.get(
+  "/user/oauth2/login/federated/google",
+  passport.authenticate("google")
+);
 
 // Oauth2 callback
 authRouter.get(

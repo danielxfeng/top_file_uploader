@@ -66,8 +66,8 @@ app.get("/", (req, res) => {
   res.render("index", { title: "Home" });
 });
 
-app.use("/files", appRouter);
-app.use("/user/*", authRouter);
+app.use("/", appRouter);
+app.use("/", authRouter);
 
 // 404 Error handler
 app.use((req, res, next) => {
