@@ -9,6 +9,7 @@ import methodOverride from "method-override";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import { PrismaClient } from "@prisma/client";
 import authRouter from "./routers/authRouter.mjs";
+import appRouter from "./routers/appRouter.mjs";
 
 // Set the environment variables
 dotenv.config();
@@ -34,8 +35,6 @@ app.use(
   session({
     store: new PrismaSessionStore(prisma, {
       checkPeriod: 2 * 60 * 1000, //ms
-      dbRecordIdIsSessionId: true,
-      dbRecordIdFunction: undefined,
     }),
     secret: process.env.FOO_COOKIE_SECRET,
     resave: false,
@@ -61,7 +60,13 @@ app.use((req, res, next) => {
 });
 
 // Routes
-app.use("/", appRouter);
+
+// Home route
+app.get("/", (req, res) => {
+  res.render("index", { title: "Home" });
+});
+
+app.use("/files", appRouter);
 app.use("/user/*", authRouter);
 
 // 404 Error handler
@@ -76,7 +81,7 @@ app.use((err, req, res, next) => {
 
   // render the error page
   res.status(err.status || 500);
-  res.render("errorPage", { title: "Error", msg });
+  res.render("error", { title: "Error", msg });
 });
 
 // Start the server

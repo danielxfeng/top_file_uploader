@@ -43,3 +43,11 @@ model DriveFile {
   User         DriveUser @relation(fields: [userId], references: [id])
   userId       Int
 }
+
+// For @quixo3/prisma-session-store
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
