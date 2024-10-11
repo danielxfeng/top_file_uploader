@@ -14,12 +14,13 @@
         <div class="file">
             <a href="/files/<%= file.id %>"><%= file.name %></a>
             <% if (file.sharedLink && file.sharedExpiry >= new Date()) { %>
-            <a target="_blank" rel="noopener noreferrer" href="<%= file.sharedLink %>">Shared Link</a>
+            <a target="_blank" rel="noopener noreferrer" href="/files/shared/<%= file.sharedLink %>">Shared Link</a>
             <p>Expires on <%= file.sharedExpiry %></p>
             <% } %>
         </div>
         <% }) %>
         <% } %>
+        <a href="/files/new">Upload a file</a>
       </div>
     </main>
     <%- include("partials/footer.ejs") %>

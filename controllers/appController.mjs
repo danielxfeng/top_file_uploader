@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import { body, validationResult } from "express-validator";
+import { v4 } from "uuid";
 import { prisma } from "../app.mjs";
 import multer from "multer";
 
@@ -20,7 +21,7 @@ const appGetFiles = asyncHandler(async (req, res) => {
 
 // GET /files/new
 const appGetNewFile = asyncHandler(async (req, res) => {
-  res.render("newFile", { title: "New File" });
+  res.render("upload", { title: "New File" });
 });
 
 // GET /files/:fileId
@@ -29,12 +30,18 @@ const appGetFile = asyncHandler(async (req, res) => {
     req.flash("error", "File not found");
     return res.redirect("/files");
   }
+  const fileId = parseInt(req.params.fileId);
+  if (isNaN(fileId)) {
+    req.flash("error", "Invalid File ID");
+    return res.redirect("/files");
+  }
+
   const file = await prisma.driveFile.findUnique({
-    where: { id: req.params.fileId },
+    where: { id: fileId },
     select: {
       id: true,
       name: true,
-      link: true,
+      fileLink: true,
       sharedLink: true,
       sharedExpiry: true,
     },
@@ -67,19 +74,14 @@ const appPostNewFile = [
 
 const putFileValidation = [
   body("expiry_time")
+    .trim()
     .custom((value, { req }) => {
-      if (req.is_share && !value) {
-        throw new Error("Expiry Time is required for shared files");
-      }
-      return true;
-    })
-    .optional({ checkFalsy: true })
-    .isISO8601()
-    .withMessage("Invalid date format")
-    .custom((value, { req }) => {
-      if (req.is_share && new Date(value) < new Date()) {
+      if (req.body.is_share !== "true") return true;
+      if (!value) throw new Error("Expiry Time is required for shared files");
+      if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))
+        throw new Error("Invalid date format");
+      if (new Date(value) < new Date())
         throw new Error("Invalid Expiry Time: must be a future date");
-      }
       return true;
     }),
 ];
@@ -88,6 +90,7 @@ const putFileValidation = [
 const appPutFile = [
   putFileValidation,
   asyncHandler(async (req, res) => {
+    console.log("body", req.body);
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       errors.array().forEach((error) => req.flash("error", error.msg));
@@ -97,12 +100,25 @@ const appPutFile = [
       req.flash("error", "File not found");
       return res.redirect("/files");
     }
+    const fileId = parseInt(req.params.fileId);
+    if (isNaN(fileId)) {
+      req.flash("error", "Invalid File ID");
+      return res.redirect("/files");
+    }
     let { is_share, expiry_time } = req.body;
-    if (!is_share) expiry_time = null;
+    let sharedLink = null;
+    if (is_share === "true") {
+      const file = await prisma.driveFile.findFirst({
+        where: { id: fileId, userId: req.user.id },
+        select: { sharedLink: true },
+      });
+      sharedLink = file.sharedLink ? file.sharedLink : v4();
+      expiry_time = new Date(expiry_time);
+    } else expiry_time = null;
     await prisma.driveFile.updateMany({
       // Use updateMany here for supporting 2 where conditions.
-      where: { id: req.params.fileId, userId: req.user.id },
-      data: { sharedExpiry: expiry_time },
+      where: { id: fileId, userId: req.user.id },
+      data: { sharedLink, sharedExpiry: expiry_time },
     });
     res.redirect("/files");
   }),
@@ -114,9 +130,14 @@ const appDelFile = asyncHandler(async (req, res) => {
     req.flash("error", "File not found");
     return res.redirect("/files");
   }
+  const fileId = parseInt(req.params.fileId);
+  if (isNaN(fileId)) {
+    req.flash("error", "Invalid File ID");
+    return res.redirect("/files");
+  }
   await prisma.driveFile.deleteMany({
     // Use deleteMany here for supporting 2 where conditions.
-    where: { id: req.params.fileId, userId: req.user.id },
+    where: { id: fileId, userId: req.user.id },
   });
   res.redirect("/files");
 });
