@@ -3,6 +3,7 @@ import {
   appGetFiles,
   appGetNewFile,
   appPostNewFile,
+  appGetFile,
   appPutFile,
   appDelFile,
   appGetSharedFile,
@@ -10,11 +11,19 @@ import {
 
 const appRouter = new Router();
 
-appRouter.get("/files", appGetFiles);
-appRouter.get("/files/new", appGetNewFile);
-appRouter.post("/files/new", appPostNewFile);
-appRouter.put("/files/:fileId", appPutFile);
-appRouter.delete("/files/:fileId", appDelFile);
+// Middleware to check if the user is authenticated
+const isAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) return next();
+  req.flash("error", "You must be logged in to view files");
+  return res.redirect("/user/login");
+};
+
+appRouter.get("/files", isAuthenticated, appGetFiles);
+appRouter.get("/files/new", isAuthenticated, appGetNewFile);
+appRouter.post("/files/new", isAuthenticated, appPostNewFile);
+appRouter.get("/files/:fileId", isAuthenticated, appGetFile);
+appRouter.put("/files/:fileId", isAuthenticated, appPutFile);
+appRouter.delete("/files/:fileId", isAuthenticated, appDelFile);
 appRouter.get("/files/shared/:sharedId", appGetSharedFile);
 
 export default appRouter;

@@ -15,6 +15,7 @@
             <a href="/files/<%= file.id %>"><%= file.name %></a>
             <% if (file.sharedLink && file.sharedExpiry >= new Date()) { %>
             <a target="_blank" rel="noopener noreferrer" href="<%= file.sharedLink %>">Shared Link</a>
+            <p>Expires on <%= file.sharedExpiry %></p>
             <% } %>
         </div>
         <% }) %>

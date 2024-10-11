@@ -5,12 +5,14 @@
     <%- include("partials/header.ejs", { title: title }) %>
     <main>
       <h1><%= title %></h1>
+      <%- include("partials/info.ejs") %>
       <div>
         <h2>Welcome to the Fancy Drive!</h2>
         <p>
           You can upload files, download files, and delete files. You can also
           share files with others.
         </p>
+        <p>The max file size is 10 KB.</p>
         <p>
           This is an exercise of
           <a
