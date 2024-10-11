@@ -1,0 +1,20 @@
+<header>
+  <div class="left">
+    <a href="/"><p>Fancy Drive</p></a>
+    <nav>
+      <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/files">Files</a></li>
+      </ul>
+    </nav>
+  </div>
+  <div class="right">
+    <div class="user">
+      <% if(!locals.user || !user) {%>
+      <a href="/user/login">Login</a>
+      <% } else { %>
+      <span>Welcome, <%= user.name %></span> |
+      <a href="/user/logout">Logout</a>
+    <div/>
+  </div>
+</header>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head.ejs", { title: title }) %>
+  <body>
+    <%- include("partials/header.ejs", { title: title }) %>
+    <main>
+      <h1><%= title %></h1>
+      <div>
+        <h2>Welcome to the Fancy Drive!</h2>
+        <p>
+          You can upload files, download files, and delete files. You can also
+          share files with others.
+        </p>
+        <p>
+          This is an exercise of
+          <a
+            href="https://theodinproject.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            >The odin project</a
+          >
+          , <b>please do not use real information</b>.
+        </p>
+      </div>
+    </main>
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>

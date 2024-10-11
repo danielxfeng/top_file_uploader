@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head.ejs", { title: title }) %>
+  <body>
+    <%- include("partials/header.ejs", { title: title }) %>
+    <main>
+      <h1><%= title %></h1>
+      <%- include("partials/error.ejs") %>
+      <div class="login_container">
+        <div class="form_container">
+          <form action="/user/login" method="post">
+            <label for="name">Name</label>
+            <input type="text" id="name" name="name" required />
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required />
+            <button type="submit">Login</button>
+          </form>
+        </div>
+        <div class="btn_container">
+          <a href="/user/login/federated/google">
+            <img src="/google.png" alt="Sign in with Google" />
+          </a>
+          <a class="button_a" href="/user/signup">Sign Up</a>
+        </div>
+      </div>
+    </main>
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>
