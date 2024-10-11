@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head.ejs", { title: title }) %>
+  <body>
+    <%- include("partials/header.ejs", { title: title }) %>
+    <main>
+      <h1><%= title %></h1>
+      <%- include("partials/info.ejs") %>
+      <div class="files">
+        <% if (!locals.files || files.length === 0) { %>
+        <p>No files uploaded yet.</p>
+        <% } else { %>
+        <% files.forEach(file=> { %>
+        <div class="file">
+            <a href="/files/<%= file.id %>"><%= file.name %></a>
+            <% if (file.sharedLink && file.sharedExpiry >= new Date()) { %>
+            <a target="_blank" rel="noopener noreferrer" href="<%= file.sharedLink %>">Shared Link</a>
+            <% } %>
+        </div>
+        <% }) %>
+        <% } %>
+      </div>
+    </main>
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>
