@@ -3,7 +3,7 @@ import { body, validationResult } from "express-validator";
 import { v4 } from "uuid";
 import { prisma } from "../app.mjs";
 import multer from "multer";
-import cloudinary from "cloudinary";
+import cloudinary from "../apis/storage.mjs";
 
 // Multer configuration for save file in memory.
 const storage = multer.memoryStorage();
