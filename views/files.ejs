@@ -13,17 +13,27 @@
         <% files.forEach(file=> { %>
         <div class="file">
           <img src="<%= file.fileLink %>" alt="<%= file.name %>"/>
-          <a href="/files/<%= file.id %>">Manage</a>
+          <a class="button_a" href="/files/<%= file.id %>">Manage</a>
           <% if (file.sharedLink && file.sharedExpiry >= new Date()) { %>
-          <a target="_blank" rel="noopener noreferrer" href="/files/shared/<%= file.sharedLink %>">Shared Link</a>
-          <p>Expires on <%= file.sharedExpiry %></p>
+          <a class="button_a" target="_blank" rel="noopener noreferrer" href="/files/shared/<%= file.sharedLink %>">Shared Link</a>
+          <p>Expires on <span class="dt"><%= file.sharedExpiry %><span></p>
           <% } %>
         </div>
         <% }) %>
         <% } %>
-        <a href="/files/new">Upload a file</a>
+      </div>
+      <div class="btn_container">
+        <a class="button_a" href="/files/new">Upload a file</a>
       </div>
     </main>
     <%- include("partials/footer.ejs") %>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const dts = document.querySelectorAll(".dt");
+        dts.forEach(dt => {
+          dt.textContent = new Date(dt.textContent).toLocaleString();
+        });
+      });
+    </script>
   </body>
 </html>
