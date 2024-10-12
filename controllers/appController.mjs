@@ -3,6 +3,7 @@ import { body, validationResult } from "express-validator";
 import { v4 } from "uuid";
 import { prisma } from "../app.mjs";
 import multer from "multer";
+import cloudinary from "cloudinary";
 
 // Multer configuration for save file in memory.
 const storage = multer.memoryStorage();
@@ -25,6 +26,7 @@ const appGetFiles = asyncHandler(async (req, res) => {
     where: { userId: req.user.id },
     select: { id: true, name: true, sharedExpiry: true, sharedLink: true },
   });
+  files.forEach((file) => { file.fileLink = cloudinary.get(file.fileLink); });
   res.render("files", { title: "Files", files });
 });
 
@@ -59,6 +61,7 @@ const appGetFile = asyncHandler(async (req, res) => {
     req.flash("error", "File not found");
     return res.redirect("/files");
   }
+  file.fileLink = cloudinary.get(file.fileLink);
   res.render("file", { title: file.name, file });
 });
 
@@ -80,10 +83,13 @@ const appPostNewFile = [
       return res.redirect("/files/new");
     }
     const { originalname, buffer } = req.file;
+
+    const uploaded = await cloudinary.upload(buffer);
     await prisma.driveFile.create({
       data: {
         name: originalname,
         userId: req.user.id,
+        fileLink: uploaded.public_id, // We store the public_id to fileLink.
       },
     });
     res.redirect("/files");
@@ -153,10 +159,18 @@ const appDelFile = asyncHandler(async (req, res) => {
     req.flash("error", "Invalid File ID");
     return res.redirect("/files");
   }
-  await prisma.driveFile.deleteMany({
-    // Use deleteMany here for supporting 2 where conditions.
+  const link = await prisma.driveFile.findFirst({
     where: { id: fileId, userId: req.user.id },
+    select: { fileLink: true },  // We store the public_id to fileLink.
   });
+
+  if (!link) {
+    req.flash("error", "File not found");
+    return res.redirect("/files");
+  }
+
+  await cloudinary.remove(link.fileLink);
+  await prisma.driveFile.delete({ where: { id: fileId } });
   res.redirect("/files");
 });
 
@@ -179,7 +193,7 @@ const appGetSharedFile = asyncHandler(async (req, res) => {
     req.flash("error", "File not found or expired");
     return res.redirect("/");
   }
-  res.redirect(file.link);
+  res.redirect(cloudinary.get(file.link));
 });
 
 export {
