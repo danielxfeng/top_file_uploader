@@ -12,7 +12,8 @@
         <% } else { %>
         <% files.forEach(file=> { %>
         <div class="file">
-            <a href="/files/<%= file.id %>"><%= file.name %></a>
+            <img src="<%= file.fileLink %>" alt="<%= file.name>"/>
+            <a href="/files/<%= file.id %>"><%= Manage %></a>
             <% if (file.sharedLink && file.sharedExpiry >= new Date()) { %>
             <a target="_blank" rel="noopener noreferrer" href="/files/shared/<%= file.sharedLink %>">Shared Link</a>
             <p>Expires on <%= file.sharedExpiry %></p>

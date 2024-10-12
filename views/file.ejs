@@ -8,6 +8,7 @@
       <%- include("partials/info.ejs") %>
       <div class="file_container">
         <h2><%= file.name %></h2>
+        <img src="<%= file.fileLink %>" alt="<%= file.name %>"/>
         <a target="_blank" rel="noopener noreferrer" href="<%= file.fileLink %>">Download</a>
         <form action="/files/<%= file.id %>?_method=PUT" method="post">
             <lable for="is_share">Share this file?</lable>
