@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head.ejs", { title: title }) %>
+  <body>
+    <%- include("partials/header.ejs", { title: title }) %>
+    <main>
+      <h1><%= title %></h1>
+      <%- include("partials/info.ejs") %>
+      <div class="file_container">
+        <h2><%= file.name %></h2>
+        <img src="<%= file.fileLink %>" alt="<%= file.name %>"/>
+        <a class="button_a" target="_blank" rel="noopener noreferrer" href="<%= file.fileLink %>">Download</a>
+        <form action="/files/<%= file.id %>?_method=PUT" method="post">
+          <lable for="is_share">Share this file?
+            <input type="checkbox" id="is_share" name="is_share" value="true"
+             <%= file.sharedExpiry ? 'checked' : '' %>/>
+          </lable>
+          <div class="expiry_time">
+            <lable for="expiry_time">Expiry Time</lable>
+            <input type="datetime-local" id="expiry_time" name="expiry_time" value="<%= file.sharedExpiry %>"/>
+          </div>
+          <button type="submit">Update</button>
+        </form>
+        <form action="/files/<%= file.id %>?_method=DELETE" method="post">
+          <button type="submit">Delete</button>
+        </form>
+      </div>
+    </main>
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>

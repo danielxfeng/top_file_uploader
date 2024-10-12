@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head.ejs", { title: title }) %>
+  <body>
+    <%- include("partials/header.ejs", { title: title }) %>
+    <main>
+      <h1><%= title %></h1>
+      <%- include("partials/info.ejs") %>
+      <div class="form_container">
+        <form action="/files/new" method="post" enctype="multipart/form-data">
+          <label for="file">Select a file:</label>
+          <input type="file" id="file" name="file" accept="image/*" required/>
+          <button type="submit">Upload</button>
+        </form>
+      </div>
+    </main>
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <%- include("partials/head.ejs", { title: title }) %>
+  <body>
+    <%- include("partials/header.ejs", { title: title }) %>
+    <main>
+      <h1><%= title %></h1>
+      <%- include("partials/info.ejs") %>
+      <div>
+        <h2>Welcome to the Fancy Drive!</h2>
+        <p>
+          You can upload jpeg/png photos, download photos, and delete photos. You can also
+          share photos with others.
+        </p>
+        <p>The max photo size is 100 KB.</p>
+        <p>
+          This is an exercise of
+          <a
+            href="https://theodinproject.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            >The odin project</a
+          >
+          , <b>Please do not use real personal information or upload sensitive/important photos.</b>.
+        </p>
+      </div>
+    </main>
+    <%- include("partials/footer.ejs") %>
+  </body>
+</html>

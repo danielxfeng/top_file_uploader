@@ -1,0 +1,17 @@
+<% if (hasMessages) { %>
+<div class="messages">
+  <% if (messages.error && messages.error.length > 0) { %>
+  <ul class="errors">
+    <% messages.error.forEach(error => { %>
+    <li><%= error %></li>
+    <% }) %>
+  </ul>
+  <% } %> <% if (messages.info && messages.info.length > 0) { %>
+  <ul class="info">
+    <% messages.info.forEach(info => { %>
+    <li><%= info %></li>
+    <% }) %>
+  </ul>
+  <% } %>
+</div>
+<% } %>
