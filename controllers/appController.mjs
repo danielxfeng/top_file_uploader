@@ -24,7 +24,7 @@ const upload = multer({
 const appGetFiles = asyncHandler(async (req, res) => {
   const files = await prisma.driveFile.findMany({
     where: { userId: req.user.id },
-    select: { id: true, name: true, sharedExpiry: true, sharedLink: true },
+    select: { id: true, name: true, fileLink: true, sharedExpiry: true, sharedLink: true },
   });
   files.forEach((file) => { file.fileLink = cloudinary.get(file.fileLink); });
   res.render("files", { title: "Files", files });
@@ -62,7 +62,7 @@ const appGetFile = asyncHandler(async (req, res) => {
     return res.redirect("/files");
   }
   file.fileLink = cloudinary.get(file.fileLink);
-  res.render("file", { title: file.name, file });
+  res.render("file", { title: "Manage a file", file });
 });
 
 // POST /files/new
@@ -186,14 +186,14 @@ const appGetSharedFile = asyncHandler(async (req, res) => {
       sharedExpiry: { gt: new Date() },
     },
     select: {
-      link: true,
+      fileLink: true,
     },
   });
   if (!file) {
     req.flash("error", "File not found or expired");
     return res.redirect("/");
   }
-  res.redirect(cloudinary.get(file.link));
+  res.redirect(cloudinary.get(file.fileLink));
 });
 
 export {
