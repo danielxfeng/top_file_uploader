@@ -30,8 +30,6 @@ const upload = (buffer) => {
 
 // Get the URL of a file in Cloudinary.
 const get = (publicId) => {
-  console.log(publicId);
-  console.log(cloudinary.url(publicId));
   return cloudinary.url(publicId);
 };
 
