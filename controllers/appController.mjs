@@ -24,9 +24,17 @@ const upload = multer({
 const appGetFiles = asyncHandler(async (req, res) => {
   const files = await prisma.driveFile.findMany({
     where: { userId: req.user.id },
-    select: { id: true, name: true, fileLink: true, sharedExpiry: true, sharedLink: true },
+    select: {
+      id: true,
+      name: true,
+      fileLink: true,
+      sharedExpiry: true,
+      sharedLink: true,
+    },
   });
-  files.forEach((file) => { file.fileLink = cloudinary.get(file.fileLink); });
+  files.forEach((file) => {
+    file.fileLink = cloudinary.get(file.fileLink);
+  });
   res.render("files", { title: "Files", files });
 });
 
@@ -160,7 +168,7 @@ const appDelFile = asyncHandler(async (req, res) => {
   }
   const link = await prisma.driveFile.findFirst({
     where: { id: fileId, userId: req.user.id },
-    select: { fileLink: true },  // We store the public_id to fileLink.
+    select: { fileLink: true }, // We store the public_id to fileLink.
   });
 
   if (!link) {
