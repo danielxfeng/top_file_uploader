@@ -4,10 +4,19 @@ import { v4 } from "uuid";
 import { prisma } from "../app.mjs";
 import multer from "multer";
 
+// Multer configuration for save file in memory.
 const storage = multer.memoryStorage();
+const fileFilter = (req, file, cb) => {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+    cb(null, true);
+  } else {
+    cb(new Error("Invalid file type. Only JPEG and PNG are allowed."), false);
+  }
+};
 const upload = multer({
   storage,
-  limits: { fileSize: 10 * 1024 }, // 10 KB
+  limits: { fileSize: 1024 * 1024 * 1 }, // 1 MB
+  fileFilter: fileFilter,
 });
 
 // GET /files
@@ -55,7 +64,16 @@ const appGetFile = asyncHandler(async (req, res) => {
 
 // POST /files/new
 const appPostNewFile = [
-  upload.single("file"),
+  // Middleware to handle file upload
+  (req, res, next) => {
+    upload.single("file")(req, res, (err) => {
+      if (err) {
+        req.flash("error", err.message);
+        return res.redirect("/files/new");
+      }
+      next();
+    });
+  },
   asyncHandler(async (req, res) => {
     if (!req.file) {
       req.flash("error", "File is required");
